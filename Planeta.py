@@ -6,7 +6,7 @@ import random
 class Bullet(pygame.sprite.Sprite):
     def __init__(self, x, y, angle):
         super().__init__()
-        imagen = pygame.image.load("venus.png")
+        imagen = pygame.image.load("disparo.png")
         self.image = pygame.transform.scale(imagen, (10, 10))
         self.Imagen = self.image
         self.rect = self.image.get_rect(center=(x, y))
@@ -28,8 +28,8 @@ class Planeta(pygame.sprite.Sprite):
         self.angle = 0
         self.bullets = pygame.sprite.Group()
         self.mask = pygame.mask.from_surface(self.image)
-        vidas_iniciales = 3
-        frecuencia_enemigos = 5
+        self.vidas_iniciales = 3  # Usar self para indicar que es un atributo de la instancia
+        self.frecuencia_enemigos = 5  # También aquí
         self.shoot_cooldown = 50  # Cooldown en milisegundos (1.2 segundos)
         self.last_shot_time = 0 
         
@@ -50,13 +50,7 @@ class Planeta(pygame.sprite.Sprite):
         all_sprites.add(nueva_bala)
         
         
-    def set_difficulty(self, dificultad):
-        if dificultad == 1:
-            Planeta.vidas_iniciales = 3
-            Planeta.frecuencia_enemigos = 4.5
-        elif dificultad == 2:
-            Planeta.vidas_iniciales = 5
-            Planeta.frecuencia_enemigos = 3
+
     def update(self):
         # # si las ponemos asi tambien se mueve (experimentos)
         self.mask =  pygame.mask.from_surface(self.image)

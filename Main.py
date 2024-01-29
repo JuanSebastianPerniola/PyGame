@@ -4,6 +4,7 @@ import Fondo
 import Planeta
 import math
 import pygame_menu
+
 from pygame.locals import QUIT, KEYDOWN, K_SPACE, K_p, K_ESCAPE
 
 # Iniciar pygame y el método Main
@@ -38,8 +39,13 @@ font_score = pygame.font.Font(None, 32)
 textX, textY = 10, 10
 
 
-
-planeta.set_difficulty(1)
+def set_difficulty(value, planeta):
+    if value == 1:
+        planeta.vidas_iniciales = 3
+        planeta.frecuencia_enemigos = 1
+    elif value == 2:
+        planeta.vidas_iniciales = 5
+        planeta.frecuencia_enemigos = 1000
        
        
 # Función para mostrar el puntaje en pantalla
@@ -73,7 +79,6 @@ def start_the_game():
                     # Crear una nueva bala en la dirección actual del jugador
                 if event.key == K_p:
                     pausado = not pausado  # Cambiar el estado de pausado
-                    
                 # elif event.key == K_ESCAPE: 
                     # if pausado:
                         # pausado = False
@@ -129,7 +134,7 @@ def start_the_game():
 
             # Colisión de enemigos con el planeta
             for enemigo in enemigos:
-                if pygame.sprite.collide_rect(enemigo, planeta):
+                if pygame.sprite.collide_mask(enemigo, planeta):
                     vidas_restantes -= 1
                     enemigos.remove(enemigo)
                     all_sprites.remove(enemigo)
@@ -179,7 +184,7 @@ menu = pygame_menu.Menu('Welcome', 400, 300, theme=pygame_menu.themes.THEME_DARK
 
 # Agrega un cuadro de texto, un selector y dos botones como en tu código original
 menu.add.text_input('Name:', default='-----')
-menu.add.selector('Difficulty:', [('Hard', 1), ('Easy', 2)], onchange=planeta.set_difficulty)
+menu.add.selector('Difficulty:', [('Hard', 1), ('Easy', 2)], onchange=set_difficulty)
 menu.add.button('Play', start_the_game)
 menu.add.button('Quit', pygame_menu.events.EXIT)
 
