@@ -129,9 +129,19 @@ def start_the_game():
                     if pygame.sprite.collide_rect(bala, enemigo):
                         enemigos.remove(enemigo)
                         all_sprites.remove(enemigo)
-                        bala.kill()
+                        bala.kill() 
                         score_value += 1
+                        planeta.enemigos_eliminados += 1
 
+            # Verificar si se han eliminado 10 enemigos
+            if planeta.enemigos_eliminados >= 10:
+                # Aplicar boost de velocidad en las balas
+                bullet.aumentar_velocidad()  
+                print("¡Boost de velocidad en las balas!")
+
+                # Reiniciar contador de enemigos eliminados después de cada 10
+                planeta.enemigos_eliminados = 0
+ 
             # Colisión de enemigos con el planeta
             for enemigo in enemigos:
                 if pygame.sprite.collide_mask(enemigo, planeta):
@@ -193,4 +203,3 @@ menu.mainloop(pantalla)
 
 # Salir del juego
 pygame.quit()
-
