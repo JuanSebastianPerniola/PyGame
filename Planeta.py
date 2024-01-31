@@ -12,9 +12,7 @@ class Bullet(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(center=(x, y))
         self.angle = angle
         self.velocidad = 5 
-    def aumentar_velocidad(self):
-        # Aumenta la velocidad de la bala según tu lógica de movimiento
-        self.velocidad += 1  # Puedes ajustar el aumento según tu preferencia
+    
     def update(self):
         rad_angle = math.radians(self.angle)
         self.rect.x += 5 * math.cos(rad_angle)
@@ -33,11 +31,9 @@ class Planeta(pygame.sprite.Sprite):
         self.mask = pygame.mask.from_surface(self.image)
         self.vidas_iniciales = 3  # Usar self para indicar que es un atributo de la instancia
         self.frecuencia_enemigos = 5  # También aquí
-        self.shoot_cooldown = 250  # Cooldown en milisegundos (1.2 segundos)
+        self.shoot_cooldown = 250 # Cooldown en milisegundos (1.2 segundos)
         self.last_shot_time = 0 
         self.enemigos_eliminados = 0
-        self.shoot_cooldown = 250  # Cooldown en milisegundos (1.2 segundos)
-        self.last_shot_time = 0
     def movement(self, keys, planeta, bullets_group, all_sprites):
         if keys[pygame.K_LEFT]:
             planeta.angle += 2
@@ -54,7 +50,12 @@ class Planeta(pygame.sprite.Sprite):
         bullets_group.add(nueva_bala)
         all_sprites.add(nueva_bala)
         
-        
+    def aumentar_velocidad(self):
+        # Aumenta la velocidad de la bala según tu lógica de movimiento
+        self.shoot_cooldown = 1
+    def disminuir_velocidad(self):
+        # Aumenta la velocidad de la bala según tu lógica de movimiento
+        self.shoot_cooldown = 250
 
     def update(self):
         # # si las ponemos asi tambien se mueve (experimentos)
@@ -63,6 +64,7 @@ class Planeta(pygame.sprite.Sprite):
         self.mask = pygame.mask.from_surface(self.image)
         # Actualiza la posición del rectángulo si es necesario
         self.rect = self.image.get_rect(center=self.rect.center)
+        
     def draw(self, screen):
             screen.blit(self.image, self.rect.topleft)
             
@@ -76,7 +78,7 @@ class Enemigo(pygame.sprite.Sprite):
         self.speed = 2  # Velocidad de movimiento del enemigo
         self.hitbox = (self.rect.x + 17, self.rect.y + 2, 31, 57) 
         self.frecuencia = 0
-        
+        self.angle = 0
     def move_towards_planet(self, planeta):
         # Calcular el ángulo entre el enemigo y el planeta
         angle = math.atan2(planeta.rect.centery - self.rect.centery, planeta.rect.centerx - self.rect.centerx)
@@ -85,7 +87,15 @@ class Enemigo(pygame.sprite.Sprite):
         self.rect.y += self.speed * math.sin(angle)
         self.enmigo_posicin = self.rect.y and self.rect.x
         pass
-    
+    def update(self):
+        
+        self.mask =  pygame.mask.from_surface(self.image)
+        self.image = pygame.transform.rotate(self.image, +self.angle)
+        self.mask = pygame.mask.from_surface(self.image)
+        # Actualiza la posición del rectángulo si es necesario
+        self.rect = self.image.get_rect(center=self.rect.center)
+        
+        pass
     # def update(self):
     def set_difficulty(vidas, dificultad):
         # global vidas_iniciales, frecuencia_enemigos

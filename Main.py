@@ -4,7 +4,7 @@ import Fondo
 import Planeta
 import math
 import pygame_menu
-
+import time
 from pygame.locals import QUIT, KEYDOWN, K_SPACE, K_p, K_ESCAPE
 
 # Iniciar pygame y el método Main
@@ -62,7 +62,7 @@ def vidas(x, y):
 # Función principal del juego
 def start_the_game():
     global score_value, vidas_iniciales, frecuencia_enemigos, vidas_restantes, pausado
-
+    boost = False  
     reloj = pygame.time.Clock()
     FPS = 60
     running = True
@@ -78,11 +78,7 @@ def start_the_game():
                 # if event.key == K_SPACE:
                     # Crear una nueva bala en la dirección actual del jugador
                 if event.key == K_p:
-                    pausado = not pausado  # Cambiar el estado de pausado
-                # elif event.key == K_ESCAPE: 
-                    # if pausado:
-                        # pausado = False
-                        # menu.mainloop(pantalla)
+                    pausado = not pausado  # Experimentos con la biblioteca
 
         # Obtener las teclas presionadas
         keys = pygame.key.get_pressed()
@@ -90,8 +86,6 @@ def start_the_game():
        
 
         if not pausado:
-            print(vidas_restantes)
-            print(vidas_restantes)
             pantalla.fill((255, 255, 255))
 
             # Dibuja la imagen de fondo antes de actualizar la pantalla
@@ -132,16 +126,22 @@ def start_the_game():
                         bala.kill() 
                         score_value += 1
                         planeta.enemigos_eliminados += 1
-
-            # Verificar si se han eliminado 10 enemigos
-            if planeta.enemigos_eliminados >= 10:
-                # Aplicar boost de velocidad en las balas
-                bullet.aumentar_velocidad()  
-                print("¡Boost de velocidad en las balas!")
-
-                # Reiniciar contador de enemigos eliminados después de cada 10
-                planeta.enemigos_eliminados = 0
  
+            # Verificar si se han eliminado 5 enemigos
+            if planeta.enemigos_eliminados >= 5:
+                # Aplicar boost de velocidad en las balas
+                planeta.aumentar_velocidad()
+                print("PEWPEWPEWPWEPEWPEWPEWP")
+                boost = True
+                # Reiniciar contador de enemigos eliminados después de cada 5
+                planeta.enemigos_eliminados = 0
+                tiempo_boost = time.time()
+
+            # Verificar si se debe disminuir la velocidad después de 3 segundos
+            if boost and time.time() - tiempo_boost > 3:
+                planeta.disminuir_velocidad()
+                boost = False
+                    
             # Colisión de enemigos con el planeta
             for enemigo in enemigos:
                 if pygame.sprite.collide_mask(enemigo, planeta):
