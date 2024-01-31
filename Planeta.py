@@ -24,7 +24,7 @@ class Planeta(pygame.sprite.Sprite):
     def __init__(self, posicion):
         super().__init__()
         imagen = pygame.image.load("venus.png")
-        self.image = pygame.transform.scale(imagen, (10, 10))
+        self.image = pygame.transform.scale(imagen, (150, 180))
         self.Imagen = self.image
         self.rect = self.image.get_rect()  # Ya no es necesario, pero lo dejaremos para compatibilidad
         self.rect.topleft = posicion
