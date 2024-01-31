@@ -70,41 +70,51 @@ class Planeta(pygame.sprite.Sprite):
             
 class Enemigo(pygame.sprite.Sprite):
     def __init__(self, posicion):
-        super().__init__()
-        imagen = pygame.image.load("alien.png")
-        self.image = pygame.transform.scale(imagen, (50, 50))
+        super().__init__()   
+        
+        # 0                             # 1
+        self.imagenes = [pygame.image.load("alien.png"), pygame.image.load("alien2.png")]
+        self.image = pygame.transform.scale(self.imagenes[0], (50, 50))
         self.rect = self.image.get_rect()
         self.rect.topleft = posicion
         self.speed = 2  # Velocidad de movimiento del enemigo
         self.hitbox = (self.rect.x + 17, self.rect.y + 2, 31, 57) 
-        self.frecuencia = 0
+        self.frecuencia = 2000  # 2000 milisegundos = 2 segundos
         self.angle = 0
+        self.last_update = pygame.time.get_ticks()  # Guardar el tiempo actual
+
     def move_towards_planet(self, planeta):
         # Calcular el ángulo entre el enemigo y el planeta
         angle = math.atan2(planeta.rect.centery - self.rect.centery, planeta.rect.centerx - self.rect.centerx)
         # Actualizar las coordenadas del enemigo en dirección al planeta
         self.rect.x += self.speed * math.cos(angle)
         self.rect.y += self.speed * math.sin(angle)
-        self.enmigo_posicin = self.rect.y and self.rect.x
-        pass
+        self.enemigo_posicion = (self.rect.y, self.rect.x)
+
     def update(self):
-        
-        self.mask =  pygame.mask.from_surface(self.image)
+        now = pygame.time.get_ticks()  # Obtener el tiempo actual
+
+        # Verificar si han pasado 2 segundos desde la última actualización
+        if now - self.last_update > self.frecuencia:
+            # Cambiar la imagen del enemigo
+            self.image = pygame.transform.scale(self.imagenes[1], (50, 50))
+            # Actualizar el tiempo de la última actualización
+            self.last_update = now
+
+        self.mask = pygame.mask.from_surface(self.image)
         self.image = pygame.transform.rotate(self.image, +self.angle)
         self.mask = pygame.mask.from_surface(self.image)
         # Actualiza la posición del rectángulo si es necesario
         self.rect = self.image.get_rect(center=self.rect.center)
-        
-        pass
-    # def update(self):
+
     def set_difficulty(vidas, dificultad):
         # global vidas_iniciales, frecuencia_enemigos
         if dificultad == 1: 
             # vidas = 3  # difícil
-            dificultad = 5
+            dificultad = 6.6
             # frecuencia_enemigos = dificultad
         elif dificultad == 2:  # fácil
             # vidas = 5  # difícil
             # vidas_iniciales = vidas
-            dificultad = 3
+            dificultad = 4
             # frecuencia_enemigos = dificultad
