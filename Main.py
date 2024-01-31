@@ -42,7 +42,7 @@ textX, textY = 10, 10
 def set_difficulty(value, planeta):
     if value == 1:
         planeta.vidas_iniciales = 3
-        planeta.frecuencia_enemigos = 1
+        planeta.frecuencia_enemigos = 500
     elif value == 2:
         planeta.vidas_iniciales = 5
         planeta.frecuencia_enemigos = 1000
@@ -90,21 +90,18 @@ def start_the_game():
 
             # Dibuja la imagen de fondo antes de actualizar la pantalla
             pantalla.blit(background_image, (0, 0))
-
-            # Crear enemigos
-            if random.randint(0, 300) < dificultad:
-                
-                random_x = random.randint(-200, pantalla.get_width() + 200)
-                random_y = random.randint(-200, pantalla.get_height() + 200)
-                distancia_al_planeta = math.sqrt((random_x - planeta.rect.centerx) ** 2 + (random_y - planeta.rect.centery) ** 2)
-                #me daba error y me quitaba una vida de gratis 
-                # Verificar si la distancia al planeta es mayor que la distancia mínima permitida
-                distancia_minima_al_planeta = 500
-                if distancia_al_planeta > distancia_minima_al_planeta:
-                    nuevo_enemigo = Planeta.Enemigo((random_x, random_y))
+            # lista_enemigos = []
+            #    crear enemigo
+            if random.randint(0, 1000) < dificultad: 
+                posicion_x = random.randint(-500, pantalla.get_width()+100)
+                posicion_y = random.randint(-500, pantalla.get_height()+100)
+                posicion = (posicion_x, posicion_y)
+                if not posicion == (800,800):
+                    nuevo_enemigo = Planeta.Enemigo((posicion_x, posicion_y))
                     all_sprites.add(nuevo_enemigo)
                     enemigos.add(nuevo_enemigo)
-              
+
+
             # Actualizar y dibujar los sprites
             all_sprites.update()
             all_sprites.draw(pantalla)
