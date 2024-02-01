@@ -2,6 +2,7 @@ import random
 import pygame
 import Fondo
 import Planeta
+import Enemigo
 import math
 import pygame_menu
 import time
@@ -23,11 +24,11 @@ all_sprites = pygame.sprite.Group()
 enemigos = pygame.sprite.Group()
 
 # Creación de Enemigo y añadirlo al grupo de sprites
-Enemigo = Planeta.Enemigo((0,0))
+# Enemigo = Enemigo.Enemigo((0,0))
 fondo = Fondo.Fondo((0, 0))
 planeta = Planeta.Planeta((320, 360))
-bullet = Planeta.Bullet(0, 0, 0)
-enemigos.add(Enemigo)
+bullet = Planeta.Bullet(-10, -10, -10)
+# enemigos.add(Enemigo.Enemigo)
 all_sprites.add(fondo, planeta, bullet)
 
 # Posición de vidas y puntaje en pantalla
@@ -42,11 +43,11 @@ textX, textY = 10, 10
 def set_difficulty(value, planeta):
     if value == 1:
         planeta.vidas_iniciales = 3
-        planeta.frecuencia_enemigos = 500
+        Enemigo.frecuencia_enemigos = 10 
     elif value == 2:
         planeta.vidas_iniciales = 5
-        planeta.frecuencia_enemigos = 1000
-       
+        Enemigo.frecuencia_enemigos = 5   #
+
        
 # Función para mostrar el puntaje en pantalla
 def show_score(x, y):
@@ -63,6 +64,7 @@ def vidas(x, y):
 def start_the_game():
     global score_value, vidas_iniciales, frecuencia_enemigos, vidas_restantes, pausado
     boost = False  
+    # momento_actual = pygame.time.get_ticks()
     reloj = pygame.time.Clock()
     FPS = 60
     running = True
@@ -70,50 +72,49 @@ def start_the_game():
     vidas_restantes = planeta.vidas_iniciales  # Utiliza las vidas_iniciales del objeto planeta
     dificultad = planeta.frecuencia_enemigos  # Utiliza la frecuencia_enemigos del objeto planeta
     reinicio_paritda = False
+    tiempo_creacion_enemigo = 0
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-            elif event.type == KEYDOWN:
-                # if event.key == K_SPACE:
-                    # Crear una nueva bala en la dirección actual del jugador
-                if event.key == K_p:
-                    pausado = not pausado  # Experimentos con la biblioteca
+            # elif event.type == K_ESCAPE:
+            #     running = False 
+            # elif event.type == KEYDOWN:
+            #     if event.key == K_p:
+            #           # Experimentos con la biblioteca
 
         # Obtener las teclas presionadas
         keys = pygame.key.get_pressed()
         planeta.movement(keys, planeta, bullets_group, all_sprites)       
        
-
+        if keys[pygame.K_p]:
+            pausado = not pausado
         if not pausado:
             pantalla.fill((255, 255, 255))
-
             # Dibuja la imagen de fondo antes de actualizar la pantalla
-            pantalla.blit(background_image, (0, 0))
-            # lista_enemigos = []
-            #    crear enemigo
-            if random.randint(0, 1000) < dificultad: 
-                posicion_x = random.randint(-500, pantalla.get_width()+100)
-                posicion_y = random.randint(-500, pantalla.get_height()+100)
-                posicion = (posicion_x, posicion_y)
-                if not posicion == (800,800):
-                    nuevo_enemigo = Planeta.Enemigo((posicion_x, posicion_y))
-                    all_sprites.add(nuevo_enemigo)
-                    enemigos.add(nuevo_enemigo)
-
-
+            pantalla.blit(background_image, (0, 0))         
+            # Lógica de creación de enemigos basada en temporizador
+            
+                      
             # Actualizar y dibujar los sprites
             all_sprites.update()
             all_sprites.draw(pantalla)
-
+            
+            for enemigo in enemigos:
+                if pygame.sprite.collide_mask(enemigo, planeta):
+                    vidas_restantes -= 1
+                    enemigos.remove(enemigo)
+                    all_sprites.remove(enemigo)
             # Mover los enemigos hacia el planeta
             for enemigo in enemigos:
                 enemigo.move_towards_planet(planeta)
-
+                
             # Eliminar balas fuera de la pantalla
             bullets_group.update()
             bullets_group.draw(pantalla)
-
+            # Colisión de enemigos con el planeta
+            
+                    
             # Colisiones de balas con enemigos
             for bala in bullets_group:
                 for enemigo in enemigos:
@@ -138,14 +139,15 @@ def start_the_game():
             if boost and time.time() - tiempo_boost > 3:
                 planeta.disminuir_velocidad()
                 boost = False
-                    
-            # Colisión de enemigos con el planeta
-            for enemigo in enemigos:
-                if pygame.sprite.collide_mask(enemigo, planeta):
-                    vidas_restantes -= 1
-                    enemigos.remove(enemigo)
-                    all_sprites.remove(enemigo)
-
+                           
+            if random.randint(0, 1000) < dificultad: 
+                posicion_x = random.randint(-500, pantalla.get_width())
+                posicion_y = random.randint(-500, pantalla.get_height())
+                posicion = (posicion_x, posicion_y)
+                if not posicion == (320, 360):
+                    nuevo_enemigo = Enemigo.Enemigo((posicion_x, posicion_y))
+                    all_sprites.add(nuevo_enemigo)
+                    enemigos.add(nuevo_enemigo)
             # Verificar si el jugador se quedó sin vidas
             if vidas_restantes <= 0:
                 if not reinicio_paritda:
