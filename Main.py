@@ -16,7 +16,7 @@ tamaño = (800, 800)
 pantalla = pygame.display.set_mode(tamaño)
 pygame.display.set_caption("Invasion a planeta")
 font = pygame.font.Font(None, 25)
-
+disparoLoco = pygame.font.Font(None, 50)
 
 # Grupos de sprites
 bullets_group = pygame.sprite.Group()
@@ -39,11 +39,12 @@ score_value = 0
 font_score = pygame.font.Font(None, 32)
 textX, textY = 10, 10
 
+pygame.mouse.set_cursor((8,8),(0,0),(0,0,0,0,0,0,0,0),(0,0,0,0,0,0,0,0))
 
 def set_difficulty(value, planeta):
     if value == 1:
         planeta.vidas_iniciales = 3
-        Enemigo.frecuencia_enemigos = 10 
+        Enemigo.frecuencia_enemigos = 10    
     elif value == 2:
         planeta.vidas_iniciales = 5
         Enemigo.frecuencia_enemigos = 5   #
@@ -77,12 +78,6 @@ def start_the_game():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-            # elif event.type == K_ESCAPE:
-            #     running = False 
-            # elif event.type == KEYDOWN:
-            #     if event.key == K_p:
-            #           # Experimentos con la biblioteca
-
         # Obtener las teclas presionadas
         keys = pygame.key.get_pressed()
         planeta.movement(keys, planeta, bullets_group, all_sprites)       
@@ -107,14 +102,7 @@ def start_the_game():
                     all_sprites.remove(enemigo)
             # Mover los enemigos hacia el planeta
             for enemigo in enemigos:
-                enemigo.move_towards_planet(planeta)
-                
-            # Eliminar balas fuera de la pantalla
-            bullets_group.update()
-            bullets_group.draw(pantalla)
-            # Colisión de enemigos con el planeta
-            
-                    
+                enemigo.move_towards_planet(planeta)            
             # Colisiones de balas con enemigos
             for bala in bullets_group:
                 for enemigo in enemigos:
@@ -124,30 +112,59 @@ def start_the_game():
                         bala.kill() 
                         score_value += 1
                         planeta.enemigos_eliminados += 1
- 
+
             # Verificar si se han eliminado 5 enemigos
-            if planeta.enemigos_eliminados >= 5:
-                # Aplicar boost de velocidad en las balas
+            if planeta.enemigos_eliminados >= 1    :
+                # ratatata
                 planeta.aumentar_velocidad()
-                print("PEWPEWPEWPWEPEWPEWPEWP")
                 boost = True
-                # Reiniciar contador de enemigos eliminados después de cada 5
+                 # Reiniciar contador de enemigos eliminados después de cada 5
                 planeta.enemigos_eliminados = 0
                 tiempo_boost = time.time()
-
+            if boost:
+                textoBUFF = disparoLoco.render("AUNMENTO DE VELOCIDAD", True, (255,255,255)) 
+                pantalla.blit(textoBUFF, (pantalla.get_width()//15,pantalla.get_height()//5))
+               
             # Verificar si se debe disminuir la velocidad después de 3 segundos
             if boost and time.time() - tiempo_boost > 3:
                 planeta.disminuir_velocidad()
                 boost = False
-                           
-            if random.randint(0, 1000) < dificultad: 
-                posicion_x = random.randint(-500, pantalla.get_width())
-                posicion_y = random.randint(-500, pantalla.get_height())
-                posicion = (posicion_x, posicion_y)
-                if not posicion == (320, 360):
-                    nuevo_enemigo = Enemigo.Enemigo((posicion_x, posicion_y))
-                    all_sprites.add(nuevo_enemigo)
-                    enemigos.add(nuevo_enemigo)
+                
+                
+                
+           
+                
+            varDifH = random.randint(0, 250)
+            varDifE = random.randint(0, 500) 
+            
+            if dificultad == 10:             
+                if varDifH < dificultad: 
+                    # Ajusta estos valores según sea necesario para que los enemigos aparezcan más lejos
+                    rango_x = (-500, pantalla.get_width())
+                    rango_y = (-500, pantalla.get_height())
+
+                    posicion_x = random.randint(*rango_x)
+                    posicion_y = random.randint(*rango_y)
+                    posicion = math.sqrt((posicion_x - planeta.rect.centerx)**2 + (posicion_y - planeta.rect.centery)**2)
+                    distanciaMin = 700
+
+                    if posicion > distanciaMin:
+                        nuevo_enemigo = Enemigo.Enemigo((posicion_x, posicion_y))
+                        all_sprites.add(nuevo_enemigo)
+                        enemigos.add(nuevo_enemigo)
+
+            if  dificultad == 5:
+                if varDifE < dificultad: 
+                    posicion_x = random.randint(-500, pantalla.get_width())
+                    posicion_y = random.randint(-500, pantalla.get_height())
+                    posicion = math.sqrt((posicion_x - planeta.rect.centerx)**2 + (posicion_y - planeta.rect.centery)**2)
+
+                    distanciaMin = 700
+                    if  posicion > distanciaMin:
+                        nuevo_enemigo = Enemigo.Enemigo((posicion_x, posicion_y))
+                        all_sprites.add(nuevo_enemigo)
+                        enemigos.add(nuevo_enemigo)    
+            
             # Verificar si el jugador se quedó sin vidas
             if vidas_restantes <= 0:
                 if not reinicio_paritda:

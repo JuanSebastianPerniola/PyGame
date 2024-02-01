@@ -9,7 +9,6 @@ class Enemigo(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.topleft = posicion
         self.speed = 2  # Velocidad de movimiento del enemigo
-        self.hitbox = (self.rect.x + 17, self.rect.y + 2, 31, 57) 
         self.frecuencia = 0
         self.angle = 0
         
