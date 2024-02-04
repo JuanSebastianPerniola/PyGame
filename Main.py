@@ -208,7 +208,12 @@ def start_the_game():
         show_score(textX, textY)        
         pygame.display.flip()
         reloj.tick(FPS)
-        
+
+# Carga la imagen del fondo
+# background_image_path = 'background.jpg'
+# background_image = pygame.image.load(background_image_path)
+# background_image = pygame.transform.scale(background_image, tamaño)
+
 # Crea el menú
 menu = pygame_menu.Menu('Welcome', 400, 300, theme=pygame_menu.themes.THEME_DARK)
 

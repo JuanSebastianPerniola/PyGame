@@ -1,6 +1,5 @@
 import pygame
 import math
-import random
 import time
 
 # Clase balas
@@ -14,13 +13,14 @@ class Bullet(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(center=(x, y))
         self.angle = angle
         self.velocidad = 5 
-    
+    #update balas para agarrar el angulo del planeta y  disparar de esas balas
+    #para evitar tener que actualziar cada angle uso una bala 
     def update(self):
         rad_angle = math.radians(self.angle)
         self.rect.x += 5 * math.cos(rad_angle)
         self.rect.y += 5 * math.sin(rad_angle)
         
-        # pantalla.blit(self.image, self.rect.topleft)
+       
 class Planeta(pygame.sprite.Sprite):
     def __init__(self, posicion):
         super().__init__()
@@ -34,12 +34,11 @@ class Planeta(pygame.sprite.Sprite):
         self.mask = pygame.mask.from_surface(self.image)
         self.vidas_iniciales = 3  # Usar self para indicar que es un atributo de la instancia
         self.frecuencia_enemigos = 5  # También aquí
-        self.shoot_cooldown = 250 # Cooldown en milisegundos (1.2 segundos)
+        self.shoot_cooldown = 250 
         self.last_shot_time = 0 
         self.enemigos_eliminados = 0
         self.tiempo_boost = -1000
-        self.pausado = False
-        
+        # movimiento/movent
     def movement(self, keys, planeta, bullets_group, all_sprites):
         if keys[pygame.K_LEFT]:
             planeta.angle += 2
@@ -50,7 +49,8 @@ class Planeta(pygame.sprite.Sprite):
             if current_time - self.last_shot_time > self.shoot_cooldown:
                 self.shoot(bullets_group, all_sprites)
                 self.last_shot_time = current_time
-       
+
+ 
     def shoot(self, bullets_group, all_sprites):
         nueva_bala = Bullet(self.rect.centerx, self.rect.centery, self.angle)
         bullets_group.add(nueva_bala)

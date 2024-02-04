@@ -18,10 +18,14 @@ class Enemigo(pygame.sprite.Sprite):
         self.rect.y += self.speed * math.sin(angle)
         # self.angle = math.degrees(angle)  # Actualiza el ángulo en grados
 
-    def update(self):
+    def update(self, planeta):
+        self.move_towards_planet(planeta)
+        angle = math.atan2(planeta.rect.centery - self.rect.centery, planeta.rect.centerx - self.rect.centerx)
+        self.rect.x += self.speed * math.cos(angle)
+        self.rect.y += self.speed * math.sin(angle)
+        # update de la mascara
         self.mask = pygame.mask.from_surface(self.image)
-        self.mask = pygame.mask.from_surface(self.image)
-        pass
+        
     # def update(self):
     def set_difficulty(vidas, dificultad):
         # global vidas_iniciales, frecuencia_enemigos

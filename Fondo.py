@@ -1,5 +1,5 @@
 import pygame
-# Fondo 
+# clase fondo
 class Fondo(pygame.sprite.Sprite):
     def __init__(self, posicion) -> None:
         super().__init__()
