@@ -8,39 +8,46 @@ import pygame_menu
 import time
 from pygame.locals import QUIT, KEYDOWN, K_SPACE, K_p, K_ESCAPE
 
-# Iniciar pygame y el método Main
+# Inicializacion de pygame
 pygame.init()
 
+
 # Inicializar la pantalla
-tamaño = (800, 800)
-pantalla = pygame.display.set_mode(tamaño)
+tamaño = (800, 800) #tamaño de window en que launchea la pantalla 
+pantalla = pygame.display.set_mode(tamaño)  
+# titulo del juego 
 pygame.display.set_caption("Invasion a planeta")
+
+#fuentes, si tuvieras o quieres descargate una seria font = pygame.font.Font("\rutaDeFuente", size)
 font = pygame.font.Font(None, 25)
 disparoLoco = pygame.font.Font(None, 50)
 
-# Grupos de sprites
+# Grupo sprute que nos provide la biblioteca pygame para colisiones 
 bullets_group = pygame.sprite.Group()
 all_sprites = pygame.sprite.Group()
 enemigos = pygame.sprite.Group()
 
-# Creación de Enemigo y añadirlo al grupo de sprites
-# Enemigo = Enemigo.Enemigo((0,0))
+# creamos el fondo  y el planeta en su posicion
 fondo = Fondo.Fondo((0, 0))
 planeta = Planeta.Planeta((320, 360))
-bullet = Planeta.Bullet(-10, -10, -10)
-# enemigos.add(Enemigo.Enemigo)
-all_sprites.add(fondo, planeta, bullet)
+all_sprites.add(fondo, planeta)
 
-# Posición de vidas y puntaje en pantalla
+
+
+# Posicion y creacion de las vidas en pantalla
 vidasX, vidasY = 10, 40
 font_vida = pygame.font.Font(None, 32)
 
+#puntuacion y su posicon
 score_value = 0
 font_score = pygame.font.Font(None, 32)
 textX, textY = 10, 10
 
+#esconder cursor
 pygame.mouse.set_cursor((8,8),(0,0),(0,0,0,0,0,0,0,0),(0,0,0,0,0,0,0,0))
 
+
+# sete de dificultad
 def set_difficulty(value, planeta):
     if value == 1:
         planeta.vidas_iniciales = 3
@@ -73,68 +80,33 @@ def start_the_game():
     vidas_restantes = planeta.vidas_iniciales  # Utiliza las vidas_iniciales del objeto planeta
     dificultad = planeta.frecuencia_enemigos  # Utiliza la frecuencia_enemigos del objeto planeta
     reinicio_paritda = False
-    tiempo_creacion_enemigo = 0
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+                
         # Obtener las teclas presionadas
         keys = pygame.key.get_pressed()
+        # añadimos las keys, planeta, bulets, y el sprite planeta al movemntes asi actualizo las balas
         planeta.movement(keys, planeta, bullets_group, all_sprites)       
-       
+        
+        # manejamos que si pulsa P pausamos el juego 
+        
         if keys[pygame.K_p]:
             pausado = not pausado
-        if not pausado:
-            pantalla.fill((255, 255, 255))
-            # Dibuja la imagen de fondo antes de actualizar la pantalla
-            pantalla.blit(background_image, (0, 0))         
-            # Lógica de creación de enemigos basada en temporizador
             
-                      
+            
+        # if not pausado = corre el juego 
+        if not pausado:
+            # Dibuja la imagen de fondo antes de actualizar la pantalla
+            # Actualizar y dibujar los sprites
             # Actualizar y dibujar los sprites
             all_sprites.update()
             all_sprites.draw(pantalla)
             
-            for enemigo in enemigos:
-                if pygame.sprite.collide_mask(enemigo, planeta):
-                    vidas_restantes -= 1
-                    enemigos.remove(enemigo)
-                    all_sprites.remove(enemigo)
-            # Mover los enemigos hacia el planeta
-            for enemigo in enemigos:
-                enemigo.move_towards_planet(planeta)            
-            # Colisiones de balas con enemigos
-            for bala in bullets_group:
-                for enemigo in enemigos:
-                    if pygame.sprite.collide_rect(bala, enemigo):
-                        enemigos.remove(enemigo)
-                        all_sprites.remove(enemigo)
-                        bala.kill() 
-                        score_value += 1
-                        planeta.enemigos_eliminados += 1
-
-            # Verificar si se han eliminado 5 enemigos
-            if planeta.enemigos_eliminados >= 1    :
-                # ratatata
-                planeta.aumentar_velocidad()
-                boost = True
-                 # Reiniciar contador de enemigos eliminados después de cada 5
-                planeta.enemigos_eliminados = 0
-                tiempo_boost = time.time()
-            if boost:
-                textoBUFF = disparoLoco.render("AUNMENTO DE VELOCIDAD", True, (255,255,255)) 
-                pantalla.blit(textoBUFF, (pantalla.get_width()//15,pantalla.get_height()//5))
-               
-            # Verificar si se debe disminuir la velocidad después de 3 segundos
-            if boost and time.time() - tiempo_boost > 3:
-                planeta.disminuir_velocidad()
-                boost = False
                 
-                
-                
-           
-                
-            varDifH = random.randint(0, 250)
+            #dificultad creada a mano ajustarlo a que sea mas "naturals"  
+            varDifH = random.randint(0, 150)
             varDifE = random.randint(0, 500) 
             
             if dificultad == 10:             
@@ -165,6 +137,44 @@ def start_the_game():
                         all_sprites.add(nuevo_enemigo)
                         enemigos.add(nuevo_enemigo)    
             
+            # creacion de enemigos y que nos reste una vida 
+            for enemigo in enemigos:
+                if pygame.sprite.collide_mask(enemigo, planeta):
+                    vidas_restantes -= 1
+                    enemigos.remove(enemigo)
+                    all_sprites.remove(enemigo)
+            # Mover los enemigos hacia el planeta
+            for enemigo in enemigos:
+                enemigo.move_towards_planet(planeta)            
+            # Colisiones de balas con enemigos
+            for bala in bullets_group:
+                for enemigo in enemigos:
+                    if pygame.sprite.collide_rect(bala, enemigo):
+                        enemigos.remove(enemigo)
+                        all_sprites.remove(enemigo)
+                        bala.kill() 
+                        score_value += 1
+                        planeta.enemigos_eliminados += 1
+
+            # Verificar si se han eliminado 5 enemigos
+            if planeta.enemigos_eliminados >= 1    :
+                
+                # aunmento de velocidad
+                planeta.aumentar_velocidad()
+                boost = True
+                
+                # Reiniciar contador de enemigos eliminados después de cada 5
+                planeta.enemigos_eliminados = 0
+                tiempo_boost = time.time()
+            if boost:
+                textoBUFF = disparoLoco.render("AUNMENTO DE VELOCIDAD", True, (255,255,255)) 
+                pantalla.blit(textoBUFF, (pantalla.get_width()//15,pantalla.get_height()//5))
+               
+            # Verificar si se debe disminuir la velocidad después de 3 segundos
+            if boost and time.time() - tiempo_boost > 3:
+                planeta.disminuir_velocidad()
+                boost = False
+            
             # Verificar si el jugador se quedó sin vidas
             if vidas_restantes <= 0:
                 if not reinicio_paritda:
@@ -191,20 +201,14 @@ def start_the_game():
         if pausado:
             texto = font.render("PAUSA", True, "White") 
             pantalla.blit(texto,(pantalla.get_width()/2-30, pantalla.get_height()/2-200))
+        
+        
         # Mostrar vidas y puntaje en pantalla
         vidas(vidasX, vidasY)
-        show_score(textX, textY)
-
-        # Mostrar mensaje de pausa si el juego está pausado
-        
+        show_score(textX, textY)        
         pygame.display.flip()
         reloj.tick(FPS)
-
-# Carga la imagen que deseas agregar al fondo
-background_image_path = 'background.jpg'
-background_image = pygame.image.load(background_image_path)
-background_image = pygame.transform.scale(background_image, tamaño)
-
+        
 # Crea el menú
 menu = pygame_menu.Menu('Welcome', 400, 300, theme=pygame_menu.themes.THEME_DARK)
 

@@ -19,6 +19,7 @@ class Bullet(pygame.sprite.Sprite):
         rad_angle = math.radians(self.angle)
         self.rect.x += 5 * math.cos(rad_angle)
         self.rect.y += 5 * math.sin(rad_angle)
+        
         # pantalla.blit(self.image, self.rect.topleft)
 class Planeta(pygame.sprite.Sprite):
     def __init__(self, posicion):
@@ -38,6 +39,7 @@ class Planeta(pygame.sprite.Sprite):
         self.enemigos_eliminados = 0
         self.tiempo_boost = -1000
         self.pausado = False
+        
     def movement(self, keys, planeta, bullets_group, all_sprites):
         if keys[pygame.K_LEFT]:
             planeta.angle += 2
@@ -48,7 +50,6 @@ class Planeta(pygame.sprite.Sprite):
             if current_time - self.last_shot_time > self.shoot_cooldown:
                 self.shoot(bullets_group, all_sprites)
                 self.last_shot_time = current_time
-                
        
     def shoot(self, bullets_group, all_sprites):
         nueva_bala = Bullet(self.rect.centerx, self.rect.centery, self.angle)

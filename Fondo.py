@@ -7,4 +7,6 @@ class Fondo(pygame.sprite.Sprite):
         pantalla = pygame.display.get_surface()
         self.image = pygame.transform.scale(image, (pantalla.get_width(), pantalla.get_height()))
         self.rect = self.image.get_rect()
-        self.rect.topleft = (0, 0)    
+        self.rect.topleft = (0, 0) 
+    def draw(self, fondo):
+          fondo.blit(self.image, self.rect.topleft)  
