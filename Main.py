@@ -51,10 +51,10 @@ pygame.mouse.set_cursor((8,8),(0,0),(0,0,0,0,0,0,0,0),(0,0,0,0,0,0,0,0))
 def set_difficulty(value, planeta):
     if value == 1:
         planeta.vidas_iniciales = 3
-        Enemigo.frecuencia_enemigos = 10    
+        Enemigo.frecuencia_enemigos = 4
     elif value == 2:
         planeta.vidas_iniciales = 5
-        Enemigo.frecuencia_enemigos = 5   #
+        Enemigo.frecuencia_enemigos = 8  
 
        
 # Función para mostrar el puntaje en pantalla
@@ -98,8 +98,7 @@ def start_the_game():
             
         # if not pausado = corre el juego 
         if not pausado:
-            # Dibuja la imagen de fondo antes de actualizar la pantalla
-            # Actualizar y dibujar los sprites
+            
             # Actualizar y dibujar los sprites
             all_sprites.update()
             all_sprites.draw(pantalla)
@@ -143,9 +142,13 @@ def start_the_game():
                     vidas_restantes -= 1
                     enemigos.remove(enemigo)
                     all_sprites.remove(enemigo)
+                    
+                    
             # Mover los enemigos hacia el planeta
             for enemigo in enemigos:
-                enemigo.move_towards_planet(planeta)            
+                enemigo.move_towards_planet(planeta)    
+                
+                        
             # Colisiones de balas con enemigos
             for bala in bullets_group:
                 for enemigo in enemigos:
@@ -157,7 +160,7 @@ def start_the_game():
                         planeta.enemigos_eliminados += 1
 
             # Verificar si se han eliminado 5 enemigos
-            if planeta.enemigos_eliminados >= 1    :
+            if planeta.enemigos_eliminados >= 1:
                 
                 # aunmento de velocidad
                 planeta.aumentar_velocidad()
@@ -168,7 +171,7 @@ def start_the_game():
                 tiempo_boost = time.time()
             if boost:
                 textoBUFF = disparoLoco.render("AUNMENTO DE VELOCIDAD", True, (255,255,255)) 
-                pantalla.blit(textoBUFF, (pantalla.get_width()//15,pantalla.get_height()//5))
+                pantalla.blit(textoBUFF, (210,pantalla.get_height()//10))
                
             # Verificar si se debe disminuir la velocidad después de 3 segundos
             if boost and time.time() - tiempo_boost > 3:
@@ -227,4 +230,4 @@ menu.add.button('Quit', pygame_menu.events.EXIT)
 menu.mainloop(pantalla)
 
 # Salir del juego
-pygame.quit()
+pygame.quit()      

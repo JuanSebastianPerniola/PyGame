@@ -1,5 +1,6 @@
 import pygame
 import math
+
 class Enemigo(pygame.sprite.Sprite):
     def __init__(self, posicion):
         super().__init__()
@@ -16,13 +17,9 @@ class Enemigo(pygame.sprite.Sprite):
         angle = math.atan2(planeta.rect.centery - self.rect.centery, planeta.rect.centerx - self.rect.centerx)
         self.rect.x += self.speed * math.cos(angle)
         self.rect.y += self.speed * math.sin(angle)
-        # self.angle = math.degrees(angle)  # Actualiza el ángulo en grados
+       
 
-    def update(self, planeta):
-        self.move_towards_planet(planeta)
-        angle = math.atan2(planeta.rect.centery - self.rect.centery, planeta.rect.centerx - self.rect.centerx)
-        self.rect.x += self.speed * math.cos(angle)
-        self.rect.y += self.speed * math.sin(angle)
+    def update(self):
         # update de la mascara
         self.mask = pygame.mask.from_surface(self.image)
         
