@@ -47,11 +47,11 @@ textX, textY = 10, 10
 pygame.mouse.set_cursor((8,8),(0,0),(0,0,0,0,0,0,0,0),(0,0,0,0,0,0,0,0))
 
 
-# sete de dificultad
+# seteo de  de dificultad
 def set_difficulty(value, planeta):
     if value == 1:
         planeta.vidas_iniciales = 3
-        Enemigo.frecuencia_enemigos = 4
+        Enemigo.frecuencia_enemigos = 5
     elif value == 2:
         planeta.vidas_iniciales = 5
         Enemigo.frecuencia_enemigos = 8  
@@ -71,11 +71,15 @@ def vidas(x, y):
 # Función principal del juego
 def start_the_game():
     global score_value, vidas_iniciales, frecuencia_enemigos, vidas_restantes, pausado
+    
+    # boosteo inicializado en false
     boost = False  
     # momento_actual = pygame.time.get_ticks()
     reloj = pygame.time.Clock()
     FPS = 60
+    # corre el juego 
     running = True
+    # pausar el juego
     pausado = False
     vidas_restantes = planeta.vidas_iniciales  # Utiliza las vidas_iniciales del objeto planeta
     dificultad = planeta.frecuencia_enemigos  # Utiliza la frecuencia_enemigos del objeto planeta
@@ -104,45 +108,49 @@ def start_the_game():
             all_sprites.draw(pantalla)
             
                 
-            #dificultad creada a mano ajustarlo a que sea mas "naturals"  
-            varDifH = random.randint(0, 150)
-            varDifE = random.randint(0, 500) 
-            
-            if dificultad == 10:             
-                if varDifH < dificultad: 
+            varDifH = random.randint(0, 25)
+            varDifE = random.randint(0, 100) 
+            # cantidad finita de creacion de enemigos 
+            if vidas_restantes == 3:             
+                if varDifH == dificultad: 
+                    print(dificultad)
                     # Ajusta estos valores según sea necesario para que los enemigos aparezcan más lejos
                     rango_x = (-500, pantalla.get_width())
                     rango_y = (-500, pantalla.get_height())
-
                     posicion_x = random.randint(*rango_x)
                     posicion_y = random.randint(*rango_y)
                     posicion = math.sqrt((posicion_x - planeta.rect.centerx)**2 + (posicion_y - planeta.rect.centery)**2)
-                    distanciaMin = 700
+                    
+                    distanciaMin = 500
+                    
+                    distancia_planeta = math.sqrt((posicion_x - planeta.rect.centerx)**2 + (posicion_y - planeta.rect.centery)**2)
 
-                    if posicion > distanciaMin:
+                    if distancia_planeta > distanciaMin:
                         nuevo_enemigo = Enemigo.Enemigo((posicion_x, posicion_y))
                         all_sprites.add(nuevo_enemigo)
                         enemigos.add(nuevo_enemigo)
-
-            if  dificultad == 5:
+                        
+            # dificultad  Easssyy
+            if  vidas_restantes == 5:
                 if varDifE < dificultad: 
                     posicion_x = random.randint(-500, pantalla.get_width())
                     posicion_y = random.randint(-500, pantalla.get_height())
                     posicion = math.sqrt((posicion_x - planeta.rect.centerx)**2 + (posicion_y - planeta.rect.centery)**2)
-
+                    distancia_planeta = math.sqrt((enemigo.rect.centerx - planeta.rect.centerx)**2 + (enemigo.rect.centery - planeta.rect.centery)**2)
                     distanciaMin = 700
                     if  posicion > distanciaMin:
                         nuevo_enemigo = Enemigo.Enemigo((posicion_x, posicion_y))
                         all_sprites.add(nuevo_enemigo)
-                        enemigos.add(nuevo_enemigo)    
-            
+                        enemigos.add(nuevo_enemigo)
+                        
             # creacion de enemigos y que nos reste una vida 
             for enemigo in enemigos:
                 if pygame.sprite.collide_mask(enemigo, planeta):
                     vidas_restantes -= 1
                     enemigos.remove(enemigo)
                     all_sprites.remove(enemigo)
-                    
+                    if distancia_planeta < 275:
+                                enemigo.rotation_speed = 500    
                     
             # Mover los enemigos hacia el planeta
             for enemigo in enemigos:

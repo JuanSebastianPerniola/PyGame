@@ -69,8 +69,9 @@ class Planeta(pygame.sprite.Sprite):
         # # si las ponemos asi tambien se mueve (experimentos)
         self.mask =  pygame.mask.from_surface(self.image)
         self.image = pygame.transform.rotate(self.Imagen, -self.angle)
-        self.mask = pygame.mask.from_surface(self.image)
         # Actualiza la posición del rectángulo si es necesario
+        # sin esto se pone modo pelota de basquete pruebalo mikie jaja
+        
         self.rect = self.image.get_rect(center=self.rect.center)
         if time.time() - self.tiempo_boost > 3:
             self.disminuir_velocidad()
