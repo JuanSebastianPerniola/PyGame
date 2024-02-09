@@ -58,7 +58,7 @@ class Planeta(pygame.sprite.Sprite):
         
     def aumentar_velocidad(self):
         # Aumenta la velocidad de la bala según tu lógica de movimiento
-        self.shoot_cooldown = 1
+        self.shoot_cooldown = 100
         self.tiempo_boost = time.time()
         
     def disminuir_velocidad(self):

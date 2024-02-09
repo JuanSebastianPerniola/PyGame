@@ -84,6 +84,9 @@ def start_the_game():
     vidas_restantes = planeta.vidas_iniciales  # Utiliza las vidas_iniciales del objeto planeta
     dificultad = planeta.frecuencia_enemigos  # Utiliza la frecuencia_enemigos del objeto planeta
     reinicio_paritda = False
+    ultimo_enemigo_tiempo = pygame.time.get_ticks()
+    cooldown_creacion_enemigosH = 500 # (chuleta de como funcina los seg en py) : 1000 milisegundos = 1 segundo
+    cooldown_creacion_enemigosE = 1000
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -107,41 +110,50 @@ def start_the_game():
             all_sprites.update()
             all_sprites.draw(pantalla)
             
-                
-            varDifH = random.randint(0, 25)
-            varDifE = random.randint(0, 100) 
-            # cantidad finita de creacion de enemigos 
-            if vidas_restantes == 3:             
-                if varDifH == dificultad: 
-                    print(dificultad)
-                    # Ajusta estos valores según sea necesario para que los enemigos aparezcan más lejos
-                    rango_x = (-500, pantalla.get_width())
-                    rango_y = (-500, pantalla.get_height())
-                    posicion_x = random.randint(*rango_x)
-                    posicion_y = random.randint(*rango_y)
-                    posicion = math.sqrt((posicion_x - planeta.rect.centerx)**2 + (posicion_y - planeta.rect.centery)**2)
-                    
-                    distanciaMin = 500
-                    
-                    distancia_planeta = math.sqrt((posicion_x - planeta.rect.centerx)**2 + (posicion_y - planeta.rect.centery)**2)
-
-                    if distancia_planeta > distanciaMin:
-                        nuevo_enemigo = Enemigo.Enemigo((posicion_x, posicion_y))
-                        all_sprites.add(nuevo_enemigo)
-                        enemigos.add(nuevo_enemigo)
+            # dificultad de manejo con ultimo_enemigoCreado
+            # dificultad hardcore?¿
+            # dificultad hard
+            if vidas_restantes == 3:
+                tiempo_actual = pygame.time.get_ticks()
+                if tiempo_actual - ultimo_enemigo_tiempo > cooldown_creacion_enemigosH:             
+                    for i in range(2):
+                           # Ajusta estos valores según sea necesario para que los enemigos aparezcan más lejos
+                           rango_x = (-500, pantalla.get_width())
+                           rango_y = (-500, pantalla.get_height())
+                           posicion_x = random.randint(*rango_x)
+                           posicion_y = random.randint(*rango_y)
+                            #distancia minima para que no aparzcan al lado del planeta
+                           distanciaMin = 500
+                           distancia_planeta = math.sqrt((posicion_x - planeta.rect.centerx)**2 + (posicion_y - planeta.rect.centery)**2)
+                           
+                           ultimo_enemigo_tiempo = tiempo_actual
+                           if distancia_planeta > distanciaMin:
+                               nuevo_enemigo = Enemigo.Enemigo((posicion_x, posicion_y))
+                               all_sprites.add(nuevo_enemigo)
+                               enemigos.add(nuevo_enemigo)
                         
             # dificultad  Easssyy
-            if  vidas_restantes == 5:
-                if varDifE < dificultad: 
-                    posicion_x = random.randint(-500, pantalla.get_width())
-                    posicion_y = random.randint(-500, pantalla.get_height())
-                    posicion = math.sqrt((posicion_x - planeta.rect.centerx)**2 + (posicion_y - planeta.rect.centery)**2)
-                    distancia_planeta = math.sqrt((enemigo.rect.centerx - planeta.rect.centerx)**2 + (enemigo.rect.centery - planeta.rect.centery)**2)
-                    distanciaMin = 700
-                    if  posicion > distanciaMin:
-                        nuevo_enemigo = Enemigo.Enemigo((posicion_x, posicion_y))
-                        all_sprites.add(nuevo_enemigo)
-                        enemigos.add(nuevo_enemigo)
+            if vidas_restantes == 5:
+                tiempo_actual = pygame.time.get_ticks()
+                if tiempo_actual - ultimo_enemigo_tiempo > cooldown_creacion_enemigosE:             
+                    for i in range(1):
+                           print(dificultad)
+                           # Ajusta estos valores según sea necesario para que los enemigos aparezcan más lejos
+                           rango_x = (-500, pantalla.get_width())
+                           rango_y = (-500, pantalla.get_height())
+                           posicion_x = random.randint(*rango_x)
+                           posicion_y = random.randint(*rango_y)
+
+                           distanciaMin = 500
+
+                           distancia_planeta = math.sqrt((posicion_x - planeta.rect.centerx)**2 + (posicion_y - planeta.rect.centery)**2)
+                           
+                           ultimo_enemigo_tiempo = tiempo_actual
+                        #creacion de enemigos 
+                           if distancia_planeta > distanciaMin:
+                               nuevo_enemigo = Enemigo.Enemigo((posicion_x, posicion_y))
+                               all_sprites.add(nuevo_enemigo)
+                               enemigos.add(nuevo_enemigo)
                         
             # creacion de enemigos y que nos reste una vida 
             for enemigo in enemigos:
@@ -150,7 +162,7 @@ def start_the_game():
                     enemigos.remove(enemigo)
                     all_sprites.remove(enemigo)
                     if distancia_planeta < 275:
-                                enemigo.rotation_speed = 500    
+                            enemigo.rotation_speed = 500    
                     
             # Mover los enemigos hacia el planeta
             for enemigo in enemigos:
@@ -168,7 +180,7 @@ def start_the_game():
                         planeta.enemigos_eliminados += 1
 
             # Verificar si se han eliminado 5 enemigos
-            if planeta.enemigos_eliminados >= 1:
+            if planeta.enemigos_eliminados >= 5:
                 
                 # aunmento de velocidad
                 planeta.aumentar_velocidad()
@@ -181,7 +193,7 @@ def start_the_game():
                 textoBUFF = disparoLoco.render("AUNMENTO DE VELOCIDAD", True, (255,255,255)) 
                 pantalla.blit(textoBUFF, (210,pantalla.get_height()//10))
                
-            # Verificar si se debe disminuir la velocidad después de 3 segundos
+            # Boosteo de 3 segundos de ataque aunmentado (velocidad de ataque aunmentada self.shoot)
             if boost and time.time() - tiempo_boost > 3:
                 planeta.disminuir_velocidad()
                 boost = False
@@ -203,7 +215,7 @@ def start_the_game():
                     score_value = 0
                     for enemigo in enemigos:
                         enemigo.kill()  # Elimina el sprite del grupo enemigos y all_sprites
-                    enemigos.empty()  # Vacía el grupo enemigos (también puedes omitir esto si usas enemigo.kill())
+                        enemigos.empty()  # Vacía el grupo enemigos (también puedes omitir esto si usas enemigo.kill())
                     pausado = False
                     reinicio_paritda = False
                     # Volver al menú principal

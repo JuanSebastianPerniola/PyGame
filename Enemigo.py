@@ -1,6 +1,5 @@
 import pygame
 import math
-
 class Enemigo(pygame.sprite.Sprite):
     def __init__(self, posicion):
         super().__init__()
@@ -28,11 +27,3 @@ class Enemigo(pygame.sprite.Sprite):
         self.angle %= 360
         # Actualizar el rectángulo del enemigo para que coincida con la nueva posición y rotación
         self.rect = self.image.get_rect(center=self.rect.center)
-        
-    def set_difficulty(vidas, dificultad):
-        # Esta función debería ser estática ya que no necesita acceder a atributos de instancia
-        # global vidas_iniciales, frecuencia_enemigos
-        if dificultad == 1: 
-            dificultad = 0.1
-        elif dificultad == 2:  # fácil
-            dificultad = 4
