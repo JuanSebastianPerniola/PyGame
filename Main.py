@@ -113,7 +113,7 @@ def start_the_game():
             # dificultad de manejo con ultimo_enemigoCreado
             # dificultad hardcore?¿
             # dificultad hard
-            if vidas_restantes == 3:
+            if vidas_restantes <= 3:
                 tiempo_actual = pygame.time.get_ticks()
                 if tiempo_actual - ultimo_enemigo_tiempo > cooldown_creacion_enemigosH:             
                     for i in range(2):
@@ -133,7 +133,7 @@ def start_the_game():
                                enemigos.add(nuevo_enemigo)
                         
             # dificultad  Easssyy
-            if vidas_restantes == 5:
+            if vidas_restantes <= 5:
                 tiempo_actual = pygame.time.get_ticks()
                 if tiempo_actual - ultimo_enemigo_tiempo > cooldown_creacion_enemigosE:             
                     for i in range(1):
